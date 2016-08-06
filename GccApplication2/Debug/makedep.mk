@@ -4,5 +4,7 @@
 
 GccApplication2.c
 
+GyroManager.c
+
 SerialManager.c
 

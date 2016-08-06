@@ -9,6 +9,7 @@
 #include <math.h>
 #include <util/delay.h>
 #include "SerialManager.h"
+#include "GyroManager.h"
 #include "dynamixel.h"
 
 #define MAIN_DELAY 1
@@ -390,7 +391,7 @@ int main(void){
 					direction = 700;
 					speed = ((float)gyro / (float)410) * 1023;
 				}
-				printf( "### GYRO = %d, SPEED = %d, GOAL = %d\r\n", gyro, speed, direction);
+				// printf( "### GYRO = %d, SPEED = %d, GOAL = %d\r\n", gyro, speed, direction);
 				dxl_write_word( 17, P_GOAL_SPEED_L, gyro );
 				dxl_write_word( 17, P_GOAL_POSITION_L, direction );
 			}
@@ -544,8 +545,6 @@ printf( "### sensorInit\n");
 
 void sensorTest(int iNum){
 	
-	int i, irValue;
-	
 	switch(iNum) {
 	case 0:
 		ADMUX = ADC_PORT_1; // ADC Port X Select
@@ -581,28 +580,17 @@ void sensorTest(int iNum){
 	while( !(ADCSRA & (1 << ADIF)) ); // Wait until AD-Conversion complete
 
 	PORTA = 0xFE; // IR-LED Off
-
-	irValue = 0;
-//	for( i=0; i<3; i++) {
-//		sensorValueArray[iNum][i] = sensorValueArray[iNum][i+1];
-//		irValue += sensorValueArray[iNum][i];
-//	}
-//	irValue += sensorValueArray[iNum][5] = ADC;
-//	if ((irValue / 5) > 30) {
-//		sensorValue[iNum] = 1;
-//	}else{
-//		sensorValue[iNum] = 0;
-//	}
 	
+	setGyroX(ADC);
 	gyroTemp += ADC;
 	if (++gyroCount > 4) {
 		preGyroValue = gyroValue;
-		gyroValue = gyroTemp / 5;
-//		printf( "### gyroValue %d\r\n", gyroValue); // Print Value on USART
+		// gyroValue = gyroTemp / 5;
+		gyroValue = gyroTemp;
+		// printf( "### gyroValue %d\r\n", gyroValue); // Print Value on USART
 		gyroCount = 0;
 		gyroTemp = 0;
 	}
-	
 //	printf( "### sensorTest() ADC:%d, i:%d\r\n", ADC, iNum); // Print Value on USART
 
 //	_delay_ms(50);

@@ -21,7 +21,7 @@ GccApplication2.d GccApplication2.o: .././GccApplication2.c \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdlib.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
- C:\embeded_c(cm700_v1.02)\include/serial.h \
+ C:\embeded_c(cm700_v1.02)\include/serial.h .././GyroManager.h \
  C:\embeded_c(cm700_v1.02)\include/dynamixel.h
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
@@ -69,5 +69,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h:
 
 C:\embeded_c(cm700_v1.02)\include/serial.h:
+
+.././GyroManager.h:
 
 C:\embeded_c(cm700_v1.02)\include/dynamixel.h:
