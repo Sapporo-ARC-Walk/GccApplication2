@@ -16,6 +16,10 @@
 #include <avr/interrupt.h>
 
 extern void setGyroX(int);
-extern float getAngleX();
+extern void setGyroY(int);
+extern void setGyroZ(int);
+extern float getGX();
+extern float getGY();
+extern float getGZ();
 
 #endif /* INCFILE1_H_ */

@@ -381,6 +381,8 @@ int main(void){
 	if (isCaptureMode ==1) dxl_write_byte( BROADCAST_ID, P_TORQUE_ENABLE, 0 );
 	while(1){
         sensorTest(0);
+		sensorTest(1);
+		sensorTest(2);
 		if (gyroValue > 0 && preGyroValue > 0) {
 			gyro = preGyroValue - gyroValue;
 			if(gyro != 0 && gyroValue != 0) {
@@ -581,7 +583,19 @@ void sensorTest(int iNum){
 
 	PORTA = 0xFE; // IR-LED Off
 	
-	setGyroX(ADC);
+	// setGyroX(ADC);
+	switch(iNum) {
+		case 0:
+			setGyroX(ADC);
+		break;
+		case 1:
+			setGyroY(ADC);
+		break;
+		case 2:
+			setGyroZ(ADC);
+		break;
+	}
+
 	gyroTemp += ADC;
 	if (++gyroCount > 4) {
 		preGyroValue = gyroValue;
