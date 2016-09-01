@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#define AVEREGE_TIMES 100
+#define AVEREGE_TIMES 10
 #define PI 3.14
 
 long mTempX = 0;
@@ -34,22 +34,26 @@ float GYRO_Z_MAX = 705.0;
 void setGyroX(int);
 void setGyroY(int);
 void setGyroZ(int);
-float getGX();
-float getGY();
-float getGZ();
+int getGX();
+int getGY();
+int getGZ();
 
 void setGyroX(int gyroX) {
+	// printf( "### gyroX %d\r\n", gyroX);
 	// Get AVEREGE
 	if (mGyroCountX >= 0 && mGyroCountX < AVEREGE_TIMES) {
+		if (mGyroX == 0) {
+			mGyroX = gyroX;
+		}
 		mTempX = mTempX + gyroX;
 		mGyroCountX++;
 	} else if (mGyroCountX >= AVEREGE_TIMES)  {
 		mGyroX = mTempX / AVEREGE_TIMES;
-		printf( "### mGyroX %d\r\n", mGyroX);
+		// printf( "### mGyroX %d\r\n", mGyroX);
 		mGyroCountX = 0;
 		mTempX = 0;
 		
-		float gravityX = getGX();
+		// float gravityX = getGX();
 		
 	} else {
 		printf( "### Oops!\r\n");
@@ -59,17 +63,21 @@ void setGyroX(int gyroX) {
 }
 
 void setGyroY(int gyroY) {
+	// printf( "### gyroY %d\r\n", gyroY);
 	// Get AVEREGE
 	if (mGyroCountY >= 0 && mGyroCountY < AVEREGE_TIMES) {
+		if (mGyroY == 0) {
+			mGyroY = gyroY;
+		}
 		mTempY = mTempY + gyroY;
 		mGyroCountY++;
 		} else if (mGyroCountY >= AVEREGE_TIMES)  {
 		mGyroY = mTempY / AVEREGE_TIMES;
-		printf( "### mGyroY %d\r\n", mGyroY);
+		// printf( "### mGyroY %d\r\n", mGyroY);
 		mGyroCountY = 0;
 		mTempY = 0;
 		
-		float gravityY = getGY();
+		// float gravityY = getGY();
 		
 		} else {
 		printf( "### Oops!\r\n");
@@ -79,17 +87,21 @@ void setGyroY(int gyroY) {
 }
 
 void setGyroZ(int gyroZ) {
+	// printf( "### gyroZ %d\r\n", gyroZ);
 	// Get AVEREGE
 	if (mGyroCountZ >= 0 && mGyroCountZ < AVEREGE_TIMES) {
+		if (mGyroZ == 0) {
+			mGyroZ = gyroZ;
+		}
 		mTempZ = mTempZ + gyroZ;
 		mGyroCountZ++;
 	} else if (mGyroCountZ >= AVEREGE_TIMES)  {
 		mGyroZ = mTempZ / AVEREGE_TIMES;
-		printf( "### mGyroZ %d\r\n", mGyroZ);
+		// printf( "### mGyroZ %d\r\n", mGyroZ);
 		mGyroCountZ = 0;
 		mTempZ = 0;
 		
-		float gravityZ = getGZ();
+		// float gravityZ = getGZ();
 		
 	} else {
 		printf( "### Oops!\r\n");
@@ -98,7 +110,7 @@ void setGyroZ(int gyroZ) {
 	}
 }
 
-float getGX() {
+int getGX() {
 	// 取得した値を0Gの時0となるようシフトさせ、Gを求める
 	float gyroXMid = (GYRO_X_MAX + GYRO_X_MIN)/2;
 	float gravityX = (mGyroX - gyroXMid)/(GYRO_X_MAX - gyroXMid);
@@ -108,12 +120,13 @@ float getGX() {
 	} else {
 		sign = "+";
 	}
-	printf( "### gravityX %s%d.%d%dG\r\n", sign, abs((int)(gravityX)), abs(((int)(gravityX * 10) % 10)), abs(((int)(gravityX * 100) % 10)));
+	printf( "### getGX %s%d.%d%dG\r\n", sign, abs((int)(gravityX)), abs(((int)(gravityX * 10) % 10)), abs(((int)(gravityX * 100) % 10)));
 
-	return gravityX;
+	// float変数を引き渡すと引き渡し先で数値がおかしくなるためint型で提供
+	return (int)(gravityX*100);
 }
 
-float getGY() {
+int getGY() {
 	// 取得した値を0Gの時0となるようシフトさせ、Gを求める
 	float gyroYMid = (GYRO_Y_MAX + GYRO_Y_MIN)/2;
 	float gravityY = (mGyroY - gyroYMid)/(GYRO_Y_MAX - gyroYMid);
@@ -123,12 +136,13 @@ float getGY() {
 	} else {
 		sign = "+";
 	}
-	printf( "### gravityY %s%d.%d%dG\r\n", sign, abs((int)(gravityY)), abs(((int)(gravityY * 10) % 10)), abs(((int)(gravityY * 100) % 10)));
+	printf( "### getGY %s%d.%d%dG\r\n", sign, abs((int)(gravityY)), abs(((int)(gravityY * 10) % 10)), abs(((int)(gravityY * 100) % 10)));
 	
-	return gravityY;
+	// float変数を引き渡すと引き渡し先で数値がおかしくなるためint型で提供
+	return (int)(gravityY*100);
 }
 
-float getGZ() {
+int getGZ() {
 	// 取得した値を0Gの時0となるようシフトさせ、Gを求める
 	float gyroZMid = (GYRO_Z_MAX + GYRO_Z_MIN)/2;
 	float gravityZ = (mGyroZ - gyroZMid)/(GYRO_Z_MAX - gyroZMid);
@@ -138,7 +152,8 @@ float getGZ() {
 	} else {
 		sign = "+";
 	}
-	printf( "### gravityZ %s%d.%d%dG\r\n", sign, abs((int)(gravityZ)), abs(((int)(gravityZ * 10) % 10)), abs(((int)(gravityZ * 100) % 10)));
+	printf( "### getGZ %s%d.%d%dG\r\n", sign, abs((int)(gravityZ)), abs(((int)(gravityZ * 10) % 10)), abs(((int)(gravityZ * 100) % 10)));
 	
-	return gravityZ;
+	// float変数を引き渡すと引き渡し先で数値がおかしくなるためint型で提供
+	return (int)(gravityZ*100);
 }

@@ -18,8 +18,8 @@
 extern void setGyroX(int);
 extern void setGyroY(int);
 extern void setGyroZ(int);
-extern float getGX();
-extern float getGY();
-extern float getGZ();
+extern int getGX();
+extern int getGY();
+extern int getGZ();
 
 #endif /* INCFILE1_H_ */

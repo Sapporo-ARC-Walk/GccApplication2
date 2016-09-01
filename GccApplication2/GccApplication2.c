@@ -46,7 +46,7 @@
 #define P_PRESENT_VOLTAGE	42
 #define P_MOVING	  		46
 #define P_EEP_LOCK  		47
-#define SERVO_MAX	  		8
+#define SERVO_MAX	  		12
 #define ACT_MAX				50
 
 //Servo Speed
@@ -71,10 +71,8 @@
 #define		ADC_PORT_6	6
 
 int serCmd[SERIAL_BUFFER_SIZE] = {0};
-                         //RF1 RF2 LF1 LF2 RR1 RR2 LR1 LR2 Necks
-//int servoId[SERVO_MAX] = { 19,   4,    14,   17,   5,    7,    16,   6,   13,12,11,10,9,8,2  };
-//int servoId[SERVO_MAX] = { 19,   4,    14,   17,   5,    7,    16,   6};
-int servoId[SERVO_MAX] = { 2,   4,    14,   17,   5,    7,    16,   6};
+	                    // R1  R2 R3  R4 R5 R6  L1 L2 L3  L4  L5  L6
+int servoId[SERVO_MAX] = { 13, 8, 10, 5, 9, 12, 4, 6, 16, 19, 15, 11};
 
 #define 	ANGLE_0    0
 #define 	ANGLE_0_5  51
@@ -104,8 +102,8 @@ int servoId[SERVO_MAX] = { 2,   4,    14,   17,   5,    7,    16,   6};
 #define 	SPEED_HIGH     400
 
 int angleList[ACT_MAX][SERVO_MAX + 1] = {
-   // RF1    RF2    LF1    LF2    RR1    RR2    LR1    LR2    Speed
-    { 112, 317, 910, 706, 910, 706, 112, 317,  100 },	//0 Default
+   // R1   R2   R3   R4   R5   R6   L1   L2   L3   L4   L5   L6    Speed
+    { 656, 786, 500, 715, 570, 518, 348, 536, 502, 294, 449, 500,  100 },	//0 Default
     { 112, 307, 910, 706, 910, 706,  37, 342,  100 },	//1 Pre Walk
 	{ 37, ANGLE_5, ANGLE_8, ANGLE_5, ANGLE_8, ANGLE_5, ANGLE_2, ANGLE_5, SPEED_MIDDLE },	//2 Pre Walk
 		
@@ -277,6 +275,7 @@ void forceMotion( int motion, int times );
 void stopMotion(void);
 void move(void);
 void setModeAction();
+void setDefaultTest(void);
 void sensorInit(void);
 void sensorTest(int);
 int (*test(void))[];
@@ -383,6 +382,7 @@ int main(void){
         sensorTest(0);
 		sensorTest(1);
 		sensorTest(2);
+		/*
 		if (gyroValue > 0 && preGyroValue > 0) {
 			gyro = preGyroValue - gyroValue;
 			if(gyro != 0 && gyroValue != 0) {
@@ -395,9 +395,12 @@ int main(void){
 				}
 				// printf( "### GYRO = %d, SPEED = %d, GOAL = %d\r\n", gyro, speed, direction);
 				dxl_write_word( 17, P_GOAL_SPEED_L, gyro );
-				dxl_write_word( 17, P_GOAL_POSITION_L, direction );
+				dxl_write_word( 17, P_GOAL_POSITION_L, direction ); 
 			}
 		}
+		*/
+		// getAngle();
+		setDefaultTest();
 		
 //        sensorTest(1);
 //        sensorTest(2);
@@ -529,6 +532,62 @@ int main(void){
 			caputureCount1 = 0;
 		}
 #endif
+	}
+}
+
+int wait = 0;
+void setDefaultTest(void){
+	// printf( "### setDefaultTest\n");
+	double thretholdX = 0.3L;
+	
+	if(wait < 2000) {
+		wait++;
+	} else {
+		int gX = getGX();
+			// printf( "###  servoId[i]:%d, angleList[ACT_DEFAULT][i]:%d\r\n",servoId[i],angleList[ACT_DEFAULT][i]);
+		if (gX > (int)(thretholdX * 100)) {
+			printf( "### Lean Left\r\n");
+			wait = 0;
+			for(int i = 0; i < SERVO_MAX; i++) {
+				if (i == 2) {
+					dxl_write_word( servoId[i], P_GOAL_SPEED_L, 200 );
+					dxl_write_word( servoId[i], P_GOAL_POSITION_L, angleList[ACT_DEFAULT][i] - 100);
+					} else if (i == 8) {
+					dxl_write_word( servoId[i], P_GOAL_SPEED_L, 200 );
+					dxl_write_word( servoId[i], P_GOAL_POSITION_L, angleList[ACT_DEFAULT][i]);
+					} else if ( i == 5 || i == 11) {
+					dxl_write_word( servoId[i], P_GOAL_SPEED_L, 200 );
+					dxl_write_word( servoId[i], P_GOAL_POSITION_L, angleList[ACT_DEFAULT][i] - 20);
+					} else {
+					dxl_write_word( servoId[i], P_GOAL_SPEED_L, 200 );
+					dxl_write_word( servoId[i], P_GOAL_POSITION_L, angleList[ACT_DEFAULT][i]);
+				}
+			}
+		} else if (gX  < (int)(thretholdX * -100)) {
+			printf( "### Lean Right\r\n");
+			wait = 0;
+			for(int i = 0; i < SERVO_MAX; i++) {
+				if (i == 2) {
+					dxl_write_word( servoId[i], P_GOAL_SPEED_L, 200 );
+					dxl_write_word( servoId[i], P_GOAL_POSITION_L, angleList[ACT_DEFAULT][i]);
+					} else if (i == 8 ) {
+					dxl_write_word( servoId[i], P_GOAL_SPEED_L, 200 );
+					dxl_write_word( servoId[i], P_GOAL_POSITION_L, angleList[ACT_DEFAULT][i] + 100);
+					} else if ( i == 5 || i == 11) {
+					dxl_write_word( servoId[i], P_GOAL_SPEED_L, 200 );
+					dxl_write_word( servoId[i], P_GOAL_POSITION_L, angleList[ACT_DEFAULT][i] + 20);
+					} else {
+					dxl_write_word( servoId[i], P_GOAL_SPEED_L, 200 );
+					dxl_write_word( servoId[i], P_GOAL_POSITION_L, angleList[ACT_DEFAULT][i]);
+				}
+			}
+		} else {
+			// printf( "### Not inclined to the left or right\r\n");
+			for(int i = 0; i < SERVO_MAX; i++) {
+			dxl_write_word( servoId[i], P_GOAL_SPEED_L, 100 );
+			dxl_write_word( servoId[i], P_GOAL_POSITION_L, angleList[ACT_DEFAULT][i]);
+			}
+		}
 	}
 }
 
@@ -735,14 +794,8 @@ void getAngle(){
 	for(int i=0; i<SERVO_MAX; i++ ){
 		tmp[i] = dxl_read_word( servoId[i], P_PRESENT_POSITION_L );
 	}
-//	printf( "%d:%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n",
-//	        EVT_GET_NOW_ANGLE, tmp[0],tmp[1],tmp[2],tmp[3],tmp[4],tmp[5],tmp[6],tmp[7],tmp[8],tmp[9],tmp[10],tmp[11] );
-// Legs
-	printf( "%d:{%d, %d, %d, %d, %d, %d, %d, %d}\n",
-			EVT_GET_NOW_ANGLE, tmp[0],tmp[1],tmp[2],tmp[3],tmp[4],tmp[5],tmp[6],tmp[7] );
-// Necks
-//    printf( "%d:{%d, %d, %d, %d, %d, %d, %d, %d}\n",
-//			EVT_GET_NOW_ANGLE, tmp[8],tmp[9],tmp[10],tmp[11],tmp[12],tmp[13],tmp[14]);
+	printf( "%d:{%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d}\n",
+			EVT_GET_NOW_ANGLE, tmp[0],tmp[1],tmp[2],tmp[3],tmp[4],tmp[5],tmp[6],tmp[7],tmp[8],tmp[9],tmp[10],tmp[11] );
 
 }
 
